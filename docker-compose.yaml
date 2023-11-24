@@ -1,0 +1,44 @@
+version: ${VERSION}
+
+services:
+  mongodb:
+    image: mongo:latest
+    container_name: mongodb
+    env_file:
+      - .env
+    volumes:
+      - ./mongodb:/data/db
+    ports:
+      - "27017:27017"
+    hostname: 192.168.1.3
+    environment:
+      - "MONGO_INITDB_DATABASE=${MONGO_INITDB_DATABASE}"
+      - "MONGO_INITDB_ROOT_USERNAME=${MONGO_INITDB_ROOT_USERNAME}"
+      - "MONGO_INITDB_ROOT_PASSWORD=${MONGO_INITDB_ROOT_PASSWORD}"
+
+  streamlit_alynisit:
+    build:
+      context: streamlit_alynisit
+    image: streamlit_alynisit
+    container_name: streamlit_alynisit
+    volumes:
+      - ./streamlit_alynisit/app:/code
+      - ./streamlit_alynisit/config:/root/.streamlit
+    ports:
+      - "8501:8501"
+    depends_on:
+      - mongodb
+
+  fastapi_alynisit:
+    build:
+      context: fastapi_alynisit
+    image: fastapi_alynisit
+    container_name: fastapi_alynisit
+    env_file:
+      - .env
+    volumes:
+      - ./fastapi_alynisit/app:/code/app
+    ports:
+      - "8000:8000"
+    depends_on:
+      - mongodb

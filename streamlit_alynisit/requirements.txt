@@ -1,0 +1,7 @@
+python-dotenv
+altair
+pandas
+streamlit
+pymongo
+plotly
+scipy
